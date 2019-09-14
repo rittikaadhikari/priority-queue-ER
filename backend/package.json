@@ -1,0 +1,11 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "license": "MIT",
+  "dependencies": {
+    "async": "2.6.2",
+    "express": "^4.17.1",
+    "tedious": "5.0.3"
+  }
+}
