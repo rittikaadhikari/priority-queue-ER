@@ -1,58 +1,73 @@
-var Connection = require('tedious').Connection;
-var Request = require('tedious').Request;
+function queryDatabase(){
+	   conn.query('DROP TABLE IF EXISTS inventory;', function (err, results, fields) { 
+			if (err) throw err; 
+			console.log('Dropped inventory table if existed.');
+		})
+  	   conn.query('CREATE TABLE inventory (id serial PRIMARY KEY, name VARCHAR(50), quantity INTEGER);', 
+	      	function (err, results, fields) {
+      			if (err) throw err;
+			console.log('Created inventory table.');
+		})
+	   conn.query('INSERT INTO inventory (name, quantity) VALUES (?, ?);', ['banana', 150], 
+      		function (err, results, fields) {
+      			if (err) throw err;
+			else console.log('Inserted ' + results.affectedRows + ' row(s).');
+	   	})
+	   conn.query('INSERT INTO inventory (name, quantity) VALUES (?, ?);', ['orange', 154], 
+      		function (err, results, fields) {
+      			if (err) throw err;
+			console.log('Inserted ' + results.affectedRows + ' row(s).');
+	   	})
+	   conn.query('INSERT INTO inventory (name, quantity) VALUES (?, ?);', ['apple', 100], 
+		function (err, results, fields) {
+      			if (err) throw err;
+			console.log('Inserted ' + results.affectedRows + ' row(s).');
+	   	})
+	   conn.end(function (err) { 
+		if (err) throw err;
+		else  console.log('Done.') 
+		});
+};
 
-// Create connection to database
-var config =
-{
-    authentication: {
-        options: {
-            userName: 'userName', // update me
-            password: 'password' // update me
-        },
-        type: 'default'
-    },
-    server: 'your_server.database.windows.net', // update me
-    options:
-    {
-        database: 'your_database', //update me
-        encrypt: true
-    }
-}
-var connection = new Connection(config);
+function updateData(){
+    conn.query('UPDATE inventory SET quantity = ? WHERE name = ?', [200, 'banana'], 
+         function (err, results, fields) {
+             if (err) throw err;
+             else console.log('Updated ' + results.affectedRows + ' row(s).');
+        })
+    conn.end(
+        function (err) { 
+             if (err) throw err;
+             else  console.log('Done.') 
+     });
+};
 
-// Attempt to connect and execute queries if connection goes through
-connection.on('connect', function(err)
-    {
-        if (err)
-        {
-            console.log(err)
-        }
-        else
-        {
-            queryDatabase()
-        }
-    }
-);
-
-function queryDatabase()
-{
-    console.log('Reading rows from the Table...');
-
-    // Read all rows from table
-    var request = new Request(
-        "SELECT TOP 20 pc.Name as CategoryName, p.name as ProductName FROM [SalesLT].[ProductCategory] pc "
-            + "JOIN [SalesLT].[Product] p ON pc.productcategoryid = p.productcategoryid",
-        function(err, rowCount, rows)
-        {
-            console.log(rowCount + ' row(s) returned');
-            process.exit();
-        }
-    );
-
-    request.on('row', function(columns) {
-        columns.forEach(function(column) {
-            console.log("%s\t%s", column.metadata.colName, column.value);
-        });
+function readData(){
+    conn.query('SELECT * FROM inventory', 
+        function (err, results, fields) {
+            if (err) throw err;
+            else console.log('Selected ' + results.length + ' row(s).');
+            for (i = 0; i < results.length; i++) {
+                console.log('Row: ' + JSON.stringify(results[i]));
+            }
+            console.log('Done.');
+        })
+   conn.end(
+       function (err) { 
+            if (err) throw err;
+            else  console.log('Closing connection.') 
     });
-    connection.execSql(request);
-}
+};
+
+function deleteData(){
+    conn.query('DELETE FROM inventory WHERE name = ?', ['orange'], 
+         function (err, results, fields) {
+             if (err) throw err;
+             else console.log('Deleted ' + results.affectedRows + ' row(s).');
+        })
+    conn.end(
+        function (err) { 
+             if (err) throw err;
+             else  console.log('Done.') 
+     });
+};

@@ -8,10 +8,10 @@ app.listen(PORT, () => {
     console.log('App running on port ' + PORT);
 })
 
-var Connection = require('tedious').Connection;
+const mysql = require('mysql');
 
 import config from './configs.js';
-var connection = new Connection(config);
+var connection = new mysql.createConnection(config);
 
 connection.connect(function(err) {
     (err) ? console.log("ERROR:" + err + "++++++++++++++/////////"):console.log("connection*********");
