@@ -8,7 +8,7 @@ export default class MyComponent extends React.Component {
         this.state = {
             data: new TinyQueue([], function (a,b) {
                 if (a.triage < b.triage) return 1;
-                if (a.triage == b.triage) {
+                if (a.triage === b.triage) {
                     return a.eta - b.eta;
                 }
                 return -1;
@@ -18,21 +18,20 @@ export default class MyComponent extends React.Component {
 
     // componentDidMount - When the component is mounted.
     componentDidMount() {
-        let queue = this.state.data;
-        queue.push({name:'Tika',triage:1,eta:3,condition:"wart on butt"})
-        queue.push({name:'An',triage:2,eta:7,condition:"broken leg"})
-        queue.push({name:'Paneer',triage:2,eta:5,condition:"someone bit me"})
-        queue.push({name:'I\'m Ded',triage:1,eta:6,condition:"Already ded"})
-        queue.push({name:'Navam',triage:4,eta:1,condition:"Exploded"})
-        this.setState({
-            data: queue
-        })
-        return;
+        // let queue = this.state.data;
+        // queue.push({name:'Tika',triage:1,eta:3,condition:"wart on butt"})
+        // queue.push({name:'An',triage:2,eta:7,condition:"broken leg"})
+        // queue.push({name:'Paneer',triage:2,eta:5,condition:"someone bit me"})
+        // queue.push({name:'I\'m Ded',triage:1,eta:6,condition:"Already ded"})
+        // queue.push({name:'Navam',triage:4,eta:1,condition:"Exploded"})
+        // this.setState({
+        //     data: queue
+        // })
+        // return;
         // Retrieve project data from the database.
-        fetch('/retrieve-data', {
-            credentials: 'include'
-        })
+        fetch('http://localhost:3001/get_all')
         .then((response) => {
+            console.log(response)
             if (response.ok) {
                 return response.json();
             } else {
@@ -63,12 +62,12 @@ export default class MyComponent extends React.Component {
         let queue = this.state.data
         while (queue.length) {
             let curdata = queue.pop();
-            if (curdata.name === value.name && curdata.eta == value.eta && curdata.condition == value.condition) {continue;}
+            if (curdata.name === value.name && curdata.eta === value.eta && curdata.condition === value.condition) {continue;}
             array.push(curdata);
         }
         let queueFormat = new TinyQueue([], function (a,b) {
             if (a.triage < b.triage) return 1;
-            if (a.triage == b.triage) {
+            if (a.triage === b.triage) {
                 return a.eta - b.eta;
             }
             return -1;
