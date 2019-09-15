@@ -3,6 +3,12 @@ from sklearn.neighbors import NearestNeighbors
 
 import numpy as np 
 import random
+import pickle 
+
+VECTORIZER_FILE = 'vectorizer.pkl'
+CONDITION_FILE = 'condition.pkl'
+SEVERITY_FILE = 'severity.pkl'
+MODEL_FILE = 'model.pkl'
 
 ''' This function reads in the mock patient condition data. '''
 def read_data(filename): 
@@ -17,7 +23,10 @@ def read_data(filename):
 ''' This function accepts a condition and predicts the condition's severity
     using a voting system from the five nearest neighbors. Then, this updates the 
     current nearest neighbors model with the new entry to populate more data. '''
-def predict_and_retrain(condition): 
+def predict_and_retrain(condition):
+    ## unpickle all files
+    vectorizer, x, y, nbrs = unpickle_files()
+
     ## uses vectorizer to get vector for condition string
     word_vec = vectorizer.transform([condition.lower()])
     
@@ -31,22 +40,61 @@ def predict_and_retrain(condition):
     votes = [0, 0, 0, 0, 0]
     for i, d in zip(neighbors_idx[:5], neighbors_dist[:5]):
         if d < 1.0: 
-            votes[Y[i]] += 1
+            votes[y[i]] += 1
     
     ## get prediction
     prediction = np.argmax(np.asarray(votes))
     
-    ## augment data with (condition, prediction)
-    X.append(condition)
-    Y.append(prediction)
+    ## augment data with (word_vec, prediction)
+    x.append(condition)
+    y.append(prediction)
     
     ## re-fit vectorizer with new data
-    words = vectorizer.fit_transform(X)
+    words = vectorizer.fit_transform(x)
     
     ## re-fit nearest neighbors with new data
     nbrs.fit(words.toarray())
+
+    ## pickle files with new updates
+    pickle_files(vectorizer, x, y, nbrs)
     
     return prediction 
+
+''' This function stores all of the necessary files 
+    for severity prediction. '''
+def pickle_files(vectorizer, x, y, model):
+    ## pickle model
+    with open(MODEL_FILE, 'wb') as fid:
+            pickle.dump(model, fid, 2)
+
+    ## pickle vectorizer
+    with open(VECTORIZER_FILE, 'wb') as fid:
+            pickle.dump(vectorizer, fid, 2)
+
+    ## pickle condition
+    with open(CONDITION_FILE, 'wb') as fid:
+            pickle.dump(x, fid, 2)
+
+    ## pickle severity
+    with open(SEVERITY_FILE, 'wb') as fid:
+            pickle.dump(y, fid, 2)
+
+''' This function unpacks all of the compressed files
+    for prediction. '''
+def unpickle_files():
+    ## unpickle model
+    model = pickle.load(open(MODEL_FILE, 'rb'))
+
+    ## unpickle vectorizer
+    vectorizer = pickle.load(open(VECTORIZER_FILE, 'rb'))
+
+    ## unpickle condition
+    x = pickle.load(open(CONDITION_FILE, 'rb'))
+
+    ## unpickle severity
+    y = pickle.load(open(SEVERITY_FILE, 'rb'))
+
+    return vectorizer, x, y, model
 
 ''' Reads data, creates a vectorizer, and initializes the 
     nearest neighbors classifier. '''
@@ -64,3 +112,6 @@ def init():
     ## initialize nearest neighbors classifier
     nbrs = NearestNeighbors(n_neighbors=len(X), metric='cosine')
     nbrs.fit(feat_vecs)
+
+    ## pickle files
+    pickle_files(vectorizer, X, Y, nbrs)
