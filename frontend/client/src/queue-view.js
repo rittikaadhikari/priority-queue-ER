@@ -83,6 +83,7 @@ export default class MyComponent extends React.Component {
     render() {
         var array = [];
         let queue = this.state.data
+        console.log(queue);
         while (queue.length) array.push(queue.pop());
         let i = 0;
         for (i = 0; i < array.length; i++) {
@@ -99,8 +100,8 @@ export default class MyComponent extends React.Component {
                 </Row>
                 {array.map((value, i) => (<Row key={i}>
                 <Col>{value.name}</Col>
-                <Col>{value.triage}</Col>
-                <Col>{value.condition}</Col>
+                <Col>{value.severity}</Col>
+                <Col>{value.condition_}</Col>
                 <Col>{value.eta}</Col>
                 <Col><Button onClick={() => {this.deleteCase(value)}}>Delete</Button></Col>
                 </Row>))}

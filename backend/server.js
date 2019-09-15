@@ -61,9 +61,10 @@ app.get('/get_all', function (req, res) {
     console.log('in /get_all')
     var connection = new mysql.createConnection(config.config);
     connection.connect(function (err) {
-        var promise = new Promise( function(resolve,reject) {resolve(queries.readData(connection));});
-        promise
-        .then(function(result) {console.log(result);}, function (failure) {console.log(failure);})
+        // var promise = new Promise( function(resolve,reject) {resolve(queries.readData(connection));});
+        // promise
+        // .then(function(result) {console.log(result);}, function (failure) {console.log(failure);})
+        queries.readData(connection).then(function(result) {res.send(result);});
         
     });
 

@@ -68,6 +68,7 @@ function insertData(conn) {
  * This function returns the data in the database as a string.
  */
 function readData(conn, res) {
+    return new Promise(function(resolve, reject) {
     console.log('in readData')
     conn.query('SELECT * FROM cases',
         function (err, results, fields) {
@@ -77,13 +78,13 @@ function readData(conn, res) {
                 console.log('Row: ' + JSON.stringify(results[i]));
             }
             console.log('Done.');
-            return JSON.stringify(results);
+            resolve( JSON.stringify(results));
         })
 
     conn.end(function (err) {
         if (err) throw err;
         else console.log('Done.')
-    });
+    });});
 };
 
 /**
