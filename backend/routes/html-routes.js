@@ -1,20 +1,22 @@
 var Request = require('tedious').Request;
 const path = require('path')
+const queries = require('../query_database')
 
 module.exports = function (app, connection) {
     app.get('/create', function (req, res) {
-        res.send(createDatabase());
+        res.send(queries.createDatabase(connection));
     })
 
     app.get('/get_all', function (req, res) { 
-        res.send(readData());
+        console.log('in /get_all')
+        res.send(queries.readData(connection));
     })
 
     app.post('/insert_data', function (req, res) {
-        res.send(insertData());
+        res.send(queries.insertData(connection));
     })
 
     app.delete('/delete_row', function (req, res) {
-        res.send(deleteData());
+        res.send(queries.deleteData(connection));
     }) 
 }
