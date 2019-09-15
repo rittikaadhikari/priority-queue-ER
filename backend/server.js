@@ -79,6 +79,8 @@ app.post('/insert_data', function (req, res) {
 });
 
 app.delete('/delete_row', function (req, res) {
+    console.log(req, res)
+    return;
     var connection = new mysql.createConnection(config.config);
     connection.connect(function (err) {
         res.send(queries.deleteData(connection));

@@ -18,16 +18,6 @@ export default class MyComponent extends React.Component {
 
     // componentDidMount - When the component is mounted.
     componentDidMount() {
-        // let queue = this.state.data;
-        // queue.push({name:'Tika',triage:1,eta:3,condition:"wart on butt"})
-        // queue.push({name:'An',triage:2,eta:7,condition:"broken leg"})
-        // queue.push({name:'Paneer',triage:2,eta:5,condition:"someone bit me"})
-        // queue.push({name:'I\'m Ded',triage:1,eta:6,condition:"Already ded"})
-        // queue.push({name:'Navam',triage:4,eta:1,condition:"Exploded"})
-        // this.setState({
-        //     data: queue
-        // })
-        // return;
         // Retrieve project data from the database.
         fetch('http://localhost:3001/get_all')
         .then((response) => {
@@ -76,9 +66,33 @@ export default class MyComponent extends React.Component {
         for (i = 0; i < array.length; i++) {
             queueFormat.push(array[i]);
         }
-        this.setState({data:queueFormat});
-
-    }
+        this.setState({data:queueFormat});const formData = new FormData();
+        // formData.append('patient_uuid', value.patient_uuid);
+        // fetch('http://localhost:3001/delete_row', {
+        //     method: 'delete',
+        //     body: formData,
+          
+        //     headers: {
+        //       'Accept': 'application/json'
+        //     },
+        //     credentials: 'same-origin', // send cookies
+        //     credentials: 'include',     // send cookies, even in CORS
+        //   })
+        // .then((response) => {
+        //     console.log(response)
+        //     if (response.ok) {
+        //         return response.json();
+        //     } else {
+        //         console.log('Error with session response');
+        //     }
+        // })
+        // .then((result) => {
+        //     console.log('Result: ', result)
+        // })
+        // .catch((error) => {
+        //     console.log('Error: ', error);
+        // });
+}
     
     render() {
         var array = [];
@@ -91,15 +105,18 @@ export default class MyComponent extends React.Component {
         }
         return (
             <Container>
+                <Row><h1>Hospital View</h1></Row>
                 <Row>
                     <Col>Name</Col>
+                    <Col>Medical UUID</Col>
                     <Col>Severity</Col>
                     <Col>Condition</Col>
                     <Col>Eta</Col>
                     <Col></Col>
                 </Row>
                 {array.map((value, i) => (<Row key={i}>
-                <Col>{value.name}</Col>
+                    <Col>{value.name}</Col>
+                    <Col>{value.health_insurance_no}</Col>
                 <Col>{value.severity}</Col>
                 <Col>{value.condition_}</Col>
                 <Col>{value.eta}</Col>
